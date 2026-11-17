@@ -1,0 +1,16 @@
+{
+  "name": "技能加点",
+  "short_name": "技能加点",
+  "description": "记录每天获得的技能点，每 100 点升一级。",
+  "lang": "zh-CN",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#F7F0E5",
+  "theme_color": "#F7F0E5",
+  "icons": [
+    { "src": "./icon-180.png", "sizes": "180x180", "type": "image/png" },
+    { "src": "./icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" }
+  ]
+}

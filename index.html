@@ -1,0 +1,1015 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#F7F0E5">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="技能加点">
+<meta name="format-detection" content="telephone=no">
+<title>技能加点</title>
+<link rel="manifest" href="./manifest.webmanifest">
+<link rel="apple-touch-icon" href="./icon-180.png">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230F6B70'/%3E%3Ccircle cx='32' cy='32' r='13' fill='none' stroke='%23FFB076' stroke-width='5'/%3E%3C/svg%3E">
+<style>
+:root{
+  --cream:#F7F0E5;
+  --paper:#FFFCF6;
+  --ink:#173F43;
+  --ink-soft:#547270;
+  --orange:#EE7327;
+  --orange-2:#F7A45B;
+  --orange-pale:#FBE3CD;
+  --orange-deep:#B9520F;
+  --teal:#0F6B70;
+  --teal-deep:#0A4A50;
+  --line:rgba(23,63,67,.13);
+  --shadow:0 4px 0 rgba(23,63,67,.09);
+  --radius:22px;
+}
+*,*::before,*::after{box-sizing:border-box}
+html,body{margin:0;padding:0}
+html{background:var(--cream);-webkit-text-size-adjust:100%}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Helvetica Neue",Arial,sans-serif;
+  color:var(--ink);
+  background:var(--cream);
+  min-height:100vh;
+  min-height:100dvh;
+  overscroll-behavior-y:none;
+  -webkit-tap-highlight-color:transparent;
+  -webkit-font-smoothing:antialiased;
+}
+body::before{
+  content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:
+    radial-gradient(420px 300px at 6% -8%, rgba(238,115,39,.22), transparent 68%),
+    radial-gradient(460px 320px at 102% 0%, rgba(15,107,112,.20), transparent 70%),
+    radial-gradient(380px 280px at 48% 112%, rgba(247,164,91,.18), transparent 72%);
+}
+body::after{
+  content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.55;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='0.06'/%3E%3C/svg%3E");
+  mix-blend-mode:multiply;
+}
+button{font-family:inherit;color:inherit;-webkit-user-select:none;user-select:none}
+input{font-family:inherit}
+.hidden{display:none!important}
+.app{position:relative;z-index:1;max-width:520px;margin:0 auto;min-height:100vh;min-height:100dvh}
+.view{position:relative}
+
+/* header */
+.app-header{display:flex;align-items:flex-start;justify-content:space-between;padding:calc(16px + env(safe-area-inset-top)) 22px 4px}
+.brand{font-size:27px;font-weight:800;letter-spacing:.01em;line-height:1.15}
+.brand-sub{margin-top:4px;font-size:12.5px;color:var(--ink-soft);letter-spacing:.05em}
+.icon-btn{width:42px;height:42px;border-radius:14px;border:2px solid var(--line);background:var(--paper);display:grid;place-items:center;box-shadow:var(--shadow);padding:0}
+.icon-btn svg{width:21px;height:21px}
+
+/* hero */
+.hero{margin:16px 16px 2px;background:linear-gradient(142deg,#127278 0%,#0A4A50 100%);border-radius:26px;padding:18px 20px 17px;color:#F7F0E5;position:relative;overflow:hidden;box-shadow:0 5px 0 rgba(10,74,80,.22)}
+.hero::after{content:"";position:absolute;right:-46px;top:-58px;width:190px;height:190px;border-radius:50%;background:radial-gradient(circle at 36% 36%, rgba(247,164,91,.9), rgba(238,115,39,.3) 58%, transparent 72%);filter:blur(2px);pointer-events:none}
+.hero-kicker{font-size:12px;letter-spacing:.14em;opacity:.78;font-weight:600}
+.hero-num{font-size:50px;line-height:1.02;font-weight:800;color:#FFB076;margin-top:5px;letter-spacing:-.01em;font-variant-numeric:tabular-nums}
+.hero-meta{font-size:12.5px;opacity:.82;margin-top:7px;position:relative;z-index:1}
+
+/* section */
+.section-title{display:flex;align-items:center;gap:8px;margin:24px 22px 11px;font-size:12.5px;font-weight:700;letter-spacing:.12em;color:var(--ink-soft)}
+.section-title::before{content:"";width:16px;height:3px;border-radius:2px;background:var(--orange)}
+.skill-list{padding:0 16px 110px}
+
+/* skill card */
+.skill-card{display:flex;align-items:center;gap:12px;padding:15px 13px 15px 16px;background:var(--paper);border:2px solid var(--line);border-radius:20px;box-shadow:var(--shadow);margin-bottom:11px;cursor:pointer}
+.skill-dot{width:11px;height:11px;border-radius:50%;background:var(--c);flex:none}
+.skill-main{flex:1;min-width:0;display:flex;flex-direction:column;gap:7px}
+.skill-top{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.skill-name{font-size:16.5px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lv{flex:none;font-size:11.5px;font-weight:800;color:var(--c);background:rgba(23,63,67,.06);border-radius:8px;padding:2px 7px;font-variant-numeric:tabular-nums}
+.bar{display:block;height:9px;background:rgba(23,63,67,.09);border-radius:99px;overflow:hidden}
+.bar>i{display:block;height:100%;background:var(--c);border-radius:99px}
+.bar.big{height:12px}
+.skill-meta{font-size:11.5px;color:var(--ink-soft);font-variant-numeric:tabular-nums}
+.add-mini{flex:none;width:38px;height:38px;border-radius:13px;border:0;background:var(--orange-pale);color:#A84A0D;font-size:20px;font-weight:700;display:grid;place-items:center;padding:0}
+.add-mini:active{transform:translateY(1px)}
+.empty{margin:18px 0;padding:26px 18px;border:2px dashed rgba(23,63,67,.18);border-radius:20px;text-align:center;color:var(--ink-soft);font-size:13.5px;line-height:1.8;background:rgba(255,252,246,.62)}
+.empty.small{padding:16px;margin:6px 0}
+
+/* action bar */
+.actionbar{position:fixed;left:0;right:0;bottom:0;z-index:20;padding:12px 18px calc(14px + env(safe-area-inset-bottom));background:linear-gradient(to top,rgba(247,240,229,.97) 58%,rgba(247,240,229,0))}
+.actionbar .inner{max-width:520px;margin:0 auto}
+.btn-primary{display:block;width:100%;border:0;border-radius:18px;background:var(--orange);color:#fff;font-size:17px;font-weight:800;letter-spacing:.03em;padding:16px;box-shadow:0 5px 0 var(--orange-deep);cursor:pointer}
+.btn-primary:active{transform:translateY(4px);box-shadow:0 1px 0 var(--orange-deep)}
+.btn-ghost{display:block;width:100%;border:2px solid var(--line);background:#fff;border-radius:14px;padding:12px;font-size:15px;font-weight:700;color:var(--ink);margin-top:9px;cursor:pointer}
+.btn-ghost:active{background:rgba(23,63,67,.04)}
+.btn-ghost.danger{color:#B23A22;border-color:rgba(178,58,34,.28)}
+.btn-primary.slim{width:auto;flex:1;padding:12px 16px;font-size:15px;border-radius:14px;box-shadow:0 3px 0 var(--orange-deep)}
+
+/* page head */
+.page-head{display:flex;align-items:center;gap:11px;padding:calc(16px + env(safe-area-inset-top)) 4px 6px}
+.page-head h2{font-size:22px;margin:0;font-weight:800}
+.back-btn{width:38px;height:38px;border-radius:12px;border:0;background:rgba(23,63,67,.08);color:var(--ink);font-size:22px;line-height:1;display:grid;place-items:center;padding:0 0 3px;flex:none}
+
+/* detail */
+#view-detail{padding:0 16px calc(30px + env(safe-area-inset-bottom))}
+.detail-head{display:flex;align-items:center;gap:11px;padding:calc(16px + env(safe-area-inset-top)) 4px 8px}
+.detail-name{font-size:24px;font-weight:800;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.lv-big{flex:none;font-size:13px;font-weight:800;color:#fff;background:var(--c);padding:5px 10px;border-radius:10px;font-variant-numeric:tabular-nums}
+.detail-total{margin:10px 2px 0;font-size:13.5px;color:var(--ink-soft)}
+.total-num{font-size:36px;font-weight:800;color:var(--ink);font-variant-numeric:tabular-nums;margin-right:2px;vertical-align:-3px}
+.detail-next{font-size:12px;color:var(--ink-soft);margin:9px 2px 0}
+.stats{display:flex;gap:9px;margin:16px 0 2px}
+.stat{flex:1;background:var(--paper);border:2px solid var(--line);border-radius:16px;padding:11px 4px;text-align:center;box-shadow:var(--shadow)}
+.stat b{display:block;font-size:18px;font-weight:800;font-variant-numeric:tabular-nums}
+.stat span{display:block;margin-top:3px;font-size:10.5px;color:var(--ink-soft);letter-spacing:.06em}
+
+/* card */
+.card{background:var(--paper);border:2px solid var(--line);border-radius:20px;box-shadow:var(--shadow);padding:15px 16px;margin:13px 0}
+#view-settings{padding:0 16px calc(30px + env(safe-area-inset-bottom))}
+#view-settings .card{margin:12px 0}
+.card-title{font-size:14.5px;font-weight:800;margin-bottom:10px;display:flex;align-items:center;justify-content:space-between;gap:8px}
+.card-title .count{font-size:11px;font-weight:600;color:var(--ink-soft)}
+.hint{font-size:12.5px;line-height:1.8;color:var(--ink-soft);margin:6px 0 11px}
+.foot{padding:18px 4px 10px;text-align:center;font-size:11px;color:rgba(84,114,112,.7)}
+
+/* chart */
+.chart-head{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.chart-head .card-title{margin-bottom:0}
+.tabs{display:flex;background:rgba(23,63,67,.07);border-radius:10px;padding:3px;gap:2px}
+.tab{border:0;background:transparent;font-size:11.5px;font-weight:700;color:var(--ink-soft);padding:5px 9px;border-radius:8px;cursor:pointer}
+.tab.on{background:var(--paper);color:var(--ink);box-shadow:0 1px 2px rgba(23,63,67,.15)}
+.chart-box{margin:12px -2px 2px}
+.chart-box svg{display:block}
+.chart-empty{padding:34px 0;text-align:center;font-size:12.5px;color:var(--ink-soft)}
+.chart-foot{font-size:11.5px;color:var(--ink-soft);text-align:center;font-variant-numeric:tabular-nums}
+
+/* entries */
+.entry{display:flex;align-items:center;gap:9px;padding:10px 0;border-bottom:1px dashed rgba(23,63,67,.13)}
+.entry:last-child{border-bottom:0}
+.entry-date{width:42px;flex:none;font-size:11.5px;color:var(--ink-soft);font-variant-numeric:tabular-nums}
+.entry-mid{flex:1;min-width:0}
+.entry-note{font-size:13.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.entry-time{font-size:10.5px;color:rgba(84,114,112,.8);margin-top:2px;font-variant-numeric:tabular-nums}
+.entry-pts{font-size:15.5px;font-weight:800;color:var(--orange-deep);font-variant-numeric:tabular-nums}
+.entry-del{width:27px;height:27px;border-radius:9px;border:0;background:rgba(23,63,67,.06);color:var(--ink-soft);font-size:15px;line-height:1;display:grid;place-items:center;padding:0;flex:none}
+.detail-cta{display:block;margin:18px 0 8px}
+
+/* manage rows */
+.manage-row{display:flex;align-items:center;gap:9px;padding:9px 0;border-bottom:1px dashed rgba(23,63,67,.13)}
+.manage-row:last-of-type{border-bottom:0}
+.manage-dot{width:10px;height:10px;border-radius:50%;background:var(--c);flex:none}
+.manage-name{flex:1;min-width:0;font-size:14.5px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mini-btn{border:2px solid var(--line);background:#fff;border-radius:10px;padding:5px 9px;font-size:11.5px;font-weight:600;color:var(--ink);cursor:pointer;flex:none}
+.mini-btn.danger{color:#B23A22;border-color:rgba(178,58,34,.25)}
+.mini-btn:active{background:rgba(23,63,67,.05)}
+
+/* sheet */
+.scrim{position:fixed;inset:0;background:rgba(23,63,67,.38);z-index:40;display:none}
+.scrim.open{display:block}
+.sheet{position:fixed;left:0;right:0;bottom:0;z-index:50;background:var(--paper);border-radius:26px 26px 0 0;border-top:2px solid var(--line);padding:0 20px calc(18px + env(safe-area-inset-bottom));max-height:92vh;max-height:92dvh;overflow-y:auto;display:none;box-shadow:0 -10px 40px rgba(23,63,67,.18)}
+.sheet.open{display:block}
+.sheet-grab{width:38px;height:4px;border-radius:2px;background:rgba(23,63,67,.2);margin:8px auto 2px}
+.sheet-head{display:flex;align-items:center;justify-content:space-between;padding:8px 0 2px}
+.sheet-title{font-size:18px;font-weight:800}
+.sheet-close{width:34px;height:34px;border-radius:11px;border:0;background:rgba(23,63,67,.06);color:var(--ink-soft);font-size:19px;line-height:1;display:grid;place-items:center;padding:0}
+.label{font-size:11.5px;font-weight:700;color:var(--ink-soft);letter-spacing:.08em;margin:16px 0 8px}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{border:2px solid var(--line);background:#fff;border-radius:999px;padding:8px 13px;font-size:14.5px;color:var(--ink);display:inline-flex;align-items:center;gap:7px;cursor:pointer}
+.chip .dot{width:8px;height:8px;border-radius:50%;background:var(--c)}
+.chip.sel{border-color:var(--orange);background:var(--orange);color:#fff;font-weight:700}
+.chip.sel .dot{background:#fff}
+.chip.new{border-style:dashed;color:var(--ink-soft)}
+.points-row{display:flex;align-items:center;justify-content:center;gap:14px}
+.step{width:46px;height:46px;border-radius:15px;border:2px solid var(--line);background:#fff;font-size:21px;font-weight:600;display:grid;place-items:center;padding:0;cursor:pointer}
+.step:active{background:rgba(23,63,67,.05)}
+.points-input{width:126px;text-align:center;font-size:46px;font-weight:800;border:0;border-bottom:4px solid var(--orange-2);background:transparent;color:var(--ink);padding:0 0 2px;outline:none;font-variant-numeric:tabular-nums;border-radius:0}
+.points-input::-webkit-outer-spin-button,.points-input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+.points-input[type=number]{-moz-appearance:textfield;appearance:textfield}
+.quick{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:12px}
+.q{padding:6px 14px;border-radius:999px;border:2px solid var(--line);background:#fff;font-size:13.5px;font-weight:600;color:var(--ink);cursor:pointer}
+.q:active{background:var(--orange-pale);border-color:var(--orange-2)}
+.field{width:100%;border:2px solid var(--line);background:#fff;border-radius:13px;padding:11px 13px;font-size:16px;color:var(--ink);outline:none}
+.field:focus{border-color:var(--orange-2)}
+.field.err{border-color:#D9542F}
+input[type=date].field{-webkit-appearance:none;appearance:none;min-height:44px}
+
+/* modal */
+#modal{position:fixed;inset:0;z-index:70;display:none;align-items:center;justify-content:center;padding:24px;background:rgba(23,63,67,.42)}
+#modal.open{display:flex}
+.modal{width:100%;max-width:340px;background:var(--paper);border-radius:22px;padding:20px;border:2px solid var(--line);box-shadow:0 16px 44px rgba(23,63,67,.28)}
+.modal-title{font-size:17px;font-weight:800;margin-bottom:13px}
+.modal-text{font-size:13.5px;line-height:1.75;color:var(--ink-soft);margin-bottom:4px;white-space:pre-line}
+.modal-actions{display:flex;gap:9px;margin-top:16px}
+
+/* toast */
+#toast{position:fixed;left:50%;bottom:calc(100px + env(safe-area-inset-bottom));transform:translateX(-50%);background:var(--ink);color:#F7F0E5;padding:10px 18px;border-radius:999px;font-size:13px;font-weight:600;z-index:90;opacity:0;pointer-events:none;white-space:nowrap;max-width:90vw;overflow:hidden;text-overflow:ellipsis}
+#toast.show{opacity:1}
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="app-header" id="appHeader">
+    <div>
+      <div class="brand">技能加点</div>
+      <div class="brand-sub" id="brandSub"></div>
+    </div>
+    <button class="icon-btn" id="settingsBtn" aria-label="设置">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <circle cx="12" cy="12" r="3"></circle>
+        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09a1.65 1.65 0 0 0-1.08-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09a1.65 1.65 0 0 0 1.51-1.08 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+      </svg>
+    </button>
+  </header>
+
+  <main id="view-home" class="view"></main>
+  <main id="view-detail" class="view hidden"></main>
+  <main id="view-settings" class="view hidden"></main>
+
+  <div class="actionbar" id="actionbar">
+    <div class="inner"><button class="btn-primary" id="quickAdd">＋ 记录技能点</button></div>
+  </div>
+
+  <div class="scrim" id="scrim"></div>
+  <div class="sheet" id="sheet"></div>
+  <div id="modal"></div>
+  <div id="toast"></div>
+</div>
+
+<script>
+(function(){
+'use strict';
+
+var KEY = 'skillpoints.v1';
+var RETENTION_DAYS = 365;
+var PALETTE = ['#0F6B70','#EE7327','#3E9C93','#D97B22','#1C8A80','#C2551A','#69B7AB','#E08A2E'];
+
+/* ---------- helpers ---------- */
+function pad(n){ return n < 10 ? '0' + n : '' + n; }
+function dayKey(ts){ var d = new Date(ts); return d.getFullYear() + '-' + pad(d.getMonth()+1) + '-' + pad(d.getDate()); }
+function monthKey(ts){ var d = new Date(ts); return d.getFullYear() + '-' + pad(d.getMonth()+1); }
+function todayK(){ return dayKey(Date.now()); }
+function dateToTs(s){ var p = s.split('-').map(Number); return new Date(p[0], p[1]-1, p[2], 12, 0, 0, 0).getTime(); }
+function uid(){ return Date.now().toString(36) + Math.random().toString(36).slice(2,7); }
+function esc(s){ return String(s).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
+function shortDate(ts){
+  var d = new Date(ts);
+  var y = new Date().getFullYear();
+  if (d.getFullYear() !== y) return d.getFullYear() + '/' + (d.getMonth()+1) + '/' + d.getDate();
+  return (d.getMonth()+1) + '/' + d.getDate();
+}
+function timeLabel(ts){ var d = new Date(ts); return pad(d.getHours()) + ':' + pad(d.getMinutes()); }
+function weekStart(){
+  var d = new Date();
+  var wd = (d.getDay() + 6) % 7;
+  return new Date(d.getFullYear(), d.getMonth(), d.getDate() - wd, 0, 0, 0, 0).getTime();
+}
+
+/* ---------- state ---------- */
+function freshState(){ return {version:1, skills:[], entries:[], archives:[], meta:{}}; }
+
+function cleanSkills(list){
+  var out = [];
+  (Array.isArray(list) ? list : []).forEach(function(x, i){
+    if (!x || !x.id || !x.name) return;
+    out.push({
+      id:String(x.id).slice(0,40),
+      name:String(x.name).slice(0,16),
+      color:/^#[0-9a-fA-F]{6}$/.test(x.color || '') ? x.color : PALETTE[i % PALETTE.length]
+    });
+  });
+  return out;
+}
+
+function cleanEntries(list, ids){
+  var out = [];
+  (Array.isArray(list) ? list : []).forEach(function(e){
+    if (!e || !e.skillId || !ids[e.skillId]) return;
+    var pts = Number(e.points), ts = Number(e.ts);
+    if (!(pts > 0) || !isFinite(ts) || ts <= 0) return;
+    out.push({
+      id:e.id ? String(e.id).slice(0,40) : uid(),
+      skillId:String(e.skillId),
+      points:Math.round(pts),
+      ts:ts,
+      note:e.note ? String(e.note).slice(0,30) : ''
+    });
+  });
+  return out;
+}
+
+function cleanArchives(list, ids){
+  var out = [];
+  (Array.isArray(list) ? list : []).forEach(function(a){
+    if (!a || !ids[a.skillId] || !/^\d{4}-\d{2}$/.test(String(a.month || ''))) return;
+    var pts = Number(a.points);
+    if (!(pts > 0)) return;
+    out.push({skillId:String(a.skillId), month:String(a.month), points:Math.round(pts), days:Math.max(0, parseInt(a.days,10) || 0)});
+  });
+  return out;
+}
+
+function loadState(){
+  try{
+    var raw = localStorage.getItem(KEY);
+    if (!raw) return freshState();
+    var s = JSON.parse(raw);
+    if (!s || !Array.isArray(s.skills)) return freshState();
+    var skills = cleanSkills(s.skills);
+    var ids = {};
+    skills.forEach(function(x){ ids[x.id] = 1; });
+    return {
+      version:1,
+      skills:skills,
+      entries:cleanEntries(s.entries, ids),
+      archives:cleanArchives(s.archives, ids),
+      meta:(s.meta && typeof s.meta === 'object') ? s.meta : {}
+    };
+  }catch(e){ return freshState(); }
+}
+
+var state = loadState();
+var ui = {view:'home', skillId:null, range:'30', addSkillId:null};
+
+function save(){
+  try{ localStorage.setItem(KEY, JSON.stringify(state)); }
+  catch(e){ toast('保存失败：浏览器存储不可用'); }
+}
+
+function compressOld(){
+  var cutoff = Date.now() - RETENTION_DAYS * 86400000;
+  var old = state.entries.filter(function(e){ return e.ts < cutoff; });
+  if (!old.length) return;
+  var map = {};
+  old.forEach(function(e){
+    var k = e.skillId + '|' + monthKey(e.ts);
+    if (!map[k]) map[k] = {skillId:e.skillId, month:monthKey(e.ts), points:0, days:{}};
+    map[k].points += e.points;
+    map[k].days[dayKey(e.ts)] = 1;
+  });
+  Object.keys(map).forEach(function(k){
+    var a = map[k];
+    var ex = null;
+    for (var i=0;i<state.archives.length;i++){
+      if (state.archives[i].skillId===a.skillId && state.archives[i].month===a.month){ ex = state.archives[i]; break; }
+    }
+    var addDays = Object.keys(a.days).length;
+    if (ex){ ex.points += a.points; ex.days = (ex.days||0) + addDays; }
+    else state.archives.push({skillId:a.skillId, month:a.month, points:a.points, days:addDays});
+  });
+  state.entries = state.entries.filter(function(e){ return e.ts >= cutoff; });
+  save();
+}
+
+/* ---------- derived ---------- */
+function skillTotal(id){
+  var total = 0, today = 0, week = 0, archDays = 0;
+  var tk = todayK(), ws = weekStart();
+  var seen = {};
+  state.entries.forEach(function(e){
+    if (e.skillId !== id) return;
+    total += e.points;
+    var k = dayKey(e.ts);
+    if (k === tk) today += e.points;
+    if (e.ts >= ws) week += e.points;
+    seen[k] = 1;
+  });
+  state.archives.forEach(function(a){
+    if (a.skillId !== id) return;
+    total += a.points;
+    archDays += (a.days || 0);
+  });
+  return {total:total, today:today, week:week, days:Object.keys(seen).length + archDays};
+}
+
+function allTotals(){
+  var total = 0, today = 0, tk = todayK();
+  state.entries.forEach(function(e){
+    total += e.points;
+    if (dayKey(e.ts) === tk) today += e.points;
+  });
+  state.archives.forEach(function(a){ total += a.points; });
+  return {total:total, today:today};
+}
+
+/* ---------- render: home ---------- */
+function renderHome(){
+  var el = document.getElementById('view-home');
+  var a = allTotals();
+  var d = new Date();
+  var wd = ['周日','周一','周二','周三','周四','周五','周六'][d.getDay()];
+  document.getElementById('brandSub').textContent = (d.getMonth()+1) + '月' + d.getDate() + '日 · ' + wd;
+
+  el.innerHTML =
+    '<section class="hero">' +
+      '<div class="hero-kicker">今日技能点</div>' +
+      '<div class="hero-num">+' + a.today + '</div>' +
+      '<div class="hero-meta">' + state.skills.length + ' 个技能 · 累计 ' + a.total + ' 点</div>' +
+    '</section>' +
+    '<div class="section-title">我的技能</div>' +
+    '<div class="skill-list" id="skillList"></div>';
+
+  var list = document.getElementById('skillList');
+  if (!state.skills.length){
+    list.innerHTML = '<div class="empty">还没有技能。<br>点下面的「＋ 记录技能点」，新建第一个分类。</div>';
+    return;
+  }
+  list.innerHTML = state.skills.map(function(s){
+    var t = skillTotal(s.id);
+    var lv = Math.floor(t.total / 100);
+    var pct = t.total % 100;
+    return '<div class="skill-card" style="--c:' + s.color + '" data-open="' + s.id + '" role="button" tabindex="0">' +
+      '<span class="skill-dot"></span>' +
+      '<span class="skill-main">' +
+        '<span class="skill-top"><span class="skill-name">' + esc(s.name) + '</span><span class="lv">Lv.' + lv + '</span></span>' +
+        '<span class="bar"><i style="width:' + pct + '%"></i></span>' +
+        '<span class="skill-meta">累计 ' + t.total + ' 点 · 再 ' + (100 - pct) + ' 点升级</span>' +
+      '</span>' +
+      '<button class="add-mini" data-add="' + s.id + '" aria-label="给' + esc(s.name) + '加点">＋</button>' +
+    '</div>';
+  }).join('');
+}
+
+/* ---------- render: detail ---------- */
+function chartSeries(skillId, range){
+  if (range === 'all'){
+    var keyset = {};
+    state.entries.forEach(function(e){ if (e.skillId === skillId) keyset[monthKey(e.ts)] = 1; });
+    state.archives.forEach(function(a){ if (a.skillId === skillId) keyset[a.month] = 1; });
+    var keys = Object.keys(keyset).sort();
+    if (!keys.length) return [];
+    var start = keys[0].split('-').map(Number);
+    var end = monthKey(Date.now());
+    var y = start[0], m = start[1], out = [], guard = 0;
+    while (guard++ < 600){
+      var k = y + '-' + pad(m);
+      var v = 0;
+      state.entries.forEach(function(e){ if (e.skillId === skillId && monthKey(e.ts) === k) v += e.points; });
+      state.archives.forEach(function(a){ if (a.skillId === skillId && a.month === k) v += a.points; });
+      out.push({label: (m === 1 ? y + '年' : '') + m + '月', v: v});
+      if (k === end) break;
+      m++; if (m > 12){ m = 1; y++; }
+    }
+    return out;
+  }
+  var n = range === '7' ? 7 : 30;
+  var startD = new Date();
+  startD.setHours(0,0,0,0);
+  var arr = [];
+  for (var i = n - 1; i >= 0; i--){
+    var dd = new Date(startD.getTime());
+    dd.setDate(dd.getDate() - i);
+    var key = dayKey(dd.getTime());
+    var val = 0;
+    state.entries.forEach(function(e){ if (e.skillId === skillId && dayKey(e.ts) === key) val += e.points; });
+    arr.push({label:(dd.getMonth()+1) + '/' + dd.getDate(), v:val});
+  }
+  return arr;
+}
+
+function buildChart(series, color){
+  if (!series.length) return '<div class="chart-empty">暂无数据</div>';
+  var W = 320, H = 152, TOP = 16, BOT = 26, LEFT = 6, RIGHT = 6;
+  var n = series.length;
+  var max = 1;
+  series.forEach(function(d){ if (d.v > max) max = d.v; });
+  var plotH = H - TOP - BOT;
+  var innerW = W - LEFT - RIGHT;
+  var step = innerW / n;
+  var bw = Math.max(4, Math.min(20, step * 0.6));
+  var bars = '';
+  series.forEach(function(d, i){
+    var h = d.v > 0 ? Math.max(3, Math.round(plotH * d.v / max)) : 2;
+    var x = LEFT + step * i + (step - bw) / 2;
+    var yy = TOP + plotH - h;
+    if (d.v > 0){
+      var op = (0.5 + 0.5 * (n === 1 ? 1 : i / (n - 1))).toFixed(2);
+      bars += '<rect x="' + x.toFixed(1) + '" y="' + yy.toFixed(1) + '" width="' + bw.toFixed(1) + '" height="' + h + '" rx="3" fill="' + color + '" opacity="' + op + '"/>';
+    } else {
+      bars += '<rect x="' + x.toFixed(1) + '" y="' + (TOP + plotH - 2).toFixed(1) + '" width="' + bw.toFixed(1) + '" height="2" rx="1" fill="rgba(23,63,67,.10)"/>';
+    }
+  });
+  var pick = n <= 7 ? series.map(function(_, i){ return i; }) : [0, Math.floor((n - 1) / 2), n - 1];
+  var uniq = [];
+  pick.forEach(function(i){ if (uniq.indexOf(i) < 0) uniq.push(i); });
+  var labels = '';
+  uniq.forEach(function(i, idx){
+    var x = LEFT + step * i + step / 2;
+    var isFirst = idx === 0, isLast = idx === uniq.length - 1;
+    var anchor = (uniq.length > 1 && isFirst) ? 'start' : (isLast ? 'end' : 'middle');
+    var xx = isFirst ? LEFT + 2 : (isLast ? W - RIGHT - 2 : x);
+    labels += '<text x="' + xx.toFixed(1) + '" y="' + (H - 8) + '" font-size="9" fill="rgba(23,63,67,.55)" text-anchor="' + anchor + '" font-family="-apple-system,BlinkMacSystemFont,\'PingFang SC\',sans-serif">' + series[i].label + '</text>';
+  });
+  return '<svg viewBox="0 0 ' + W + ' ' + H + '" width="100%" role="img" aria-label="柱状图">' +
+    '<line x1="' + LEFT + '" y1="' + (TOP + plotH) + '" x2="' + (W - RIGHT) + '" y2="' + (TOP + plotH) + '" stroke="rgba(23,63,67,.18)" stroke-width="1"/>' +
+    bars + labels +
+  '</svg>';
+}
+
+function entryList(id){
+  var list = state.entries.filter(function(e){ return e.skillId === id; }).sort(function(a,b){ return b.ts - a.ts; }).slice(0, 80);
+  if (!list.length) return '<div class="empty small">还没有记录，加一次点试试。</div>';
+  return list.map(function(e){
+    return '<div class="entry">' +
+      '<div class="entry-date">' + shortDate(e.ts) + '</div>' +
+      '<div class="entry-mid">' +
+        '<div class="entry-note">' + (e.note ? esc(e.note) : '<span style="color:rgba(84,114,112,.6)">未写备注</span>') + '</div>' +
+        '<div class="entry-time">' + timeLabel(e.ts) + '</div>' +
+      '</div>' +
+      '<div class="entry-pts">+' + e.points + '</div>' +
+      '<button class="entry-del" data-del="' + e.id + '" aria-label="删除这条">×</button>' +
+    '</div>';
+  }).join('');
+}
+
+function renderDetail(){
+  var s = null;
+  for (var i=0;i<state.skills.length;i++) if (state.skills[i].id === ui.skillId) s = state.skills[i];
+  if (!s){ ui.view = 'home'; return; }
+  var t = skillTotal(s.id);
+  var lv = Math.floor(t.total / 100);
+  var pct = t.total % 100;
+  var series = chartSeries(s.id, ui.range);
+  var peak = 0, sum = 0;
+  series.forEach(function(d){ if (d.v > peak) peak = d.v; sum += d.v; });
+  var rangeLabel = ui.range === 'all' ? '按月' : ui.range + ' 天';
+  var el = document.getElementById('view-detail');
+  el.innerHTML =
+    '<div class="detail-head">' +
+      '<button class="back-btn" data-back-home aria-label="返回">‹</button>' +
+      '<div class="detail-name">' + esc(s.name) + '</div>' +
+      '<div class="lv-big" style="--c:' + s.color + '">Lv.' + lv + '</div>' +
+    '</div>' +
+    '<div class="detail-total"><span class="total-num">' + t.total + '</span> 点累计</div>' +
+    '<div class="bar big" style="--c:' + s.color + '"><i style="width:' + pct + '%"></i></div>' +
+    '<div class="detail-next">距离 Lv.' + (lv + 1) + ' 还差 ' + (100 - pct) + ' 点</div>' +
+    '<div class="stats">' +
+      '<div class="stat"><b>+' + t.today + '</b><span>今日</span></div>' +
+      '<div class="stat"><b>+' + t.week + '</b><span>本周</span></div>' +
+      '<div class="stat"><b>' + t.days + '</b><span>记录天数</span></div>' +
+    '</div>' +
+    '<div class="card">' +
+      '<div class="chart-head">' +
+        '<div class="card-title">历史记录</div>' +
+        '<div class="tabs">' +
+          '<button class="tab ' + (ui.range === '7' ? 'on' : '') + '" data-range="7">7天</button>' +
+          '<button class="tab ' + (ui.range === '30' ? 'on' : '') + '" data-range="30">30天</button>' +
+          '<button class="tab ' + (ui.range === 'all' ? 'on' : '') + '" data-range="all">按月</button>' +
+        '</div>' +
+      '</div>' +
+      '<div class="chart-box">' + buildChart(series, s.color) + '</div>' +
+      '<div class="chart-foot">' + (sum > 0 ? (rangeLabel + '内共 ' + sum + ' 点 · 单日最高 ' + peak + ' 点') : '这个区间还没有记录') + '</div>' +
+    '</div>' +
+    '<div class="card">' +
+      '<div class="card-title">最近记录 <span class="count">' + state.entries.filter(function(e){ return e.skillId === s.id; }).length + ' 条</span></div>' +
+      entryList(s.id) +
+    '</div>' +
+    '<div class="detail-cta"><button class="btn-primary" data-add="' + s.id + '">给「' + esc(s.name) + '」加点</button></div>';
+}
+
+/* ---------- render: settings ---------- */
+function renderSettings(){
+  var el = document.getElementById('view-settings');
+  var rows = state.skills.map(function(s){
+    return '<div class="manage-row" style="--c:' + s.color + '">' +
+      '<span class="manage-dot"></span>' +
+      '<span class="manage-name">' + esc(s.name) + '</span>' +
+      '<button class="mini-btn" data-rename="' + s.id + '">改名</button>' +
+      '<button class="mini-btn danger" data-remove="' + s.id + '">删除</button>' +
+    '</div>';
+  }).join('') || '<div class="hint" style="margin:2px 0 10px">还没有技能分类。</div>';
+  el.innerHTML =
+    '<div class="page-head"><button class="back-btn" data-back-home aria-label="返回">‹</button><h2>设置</h2></div>' +
+    '<div class="card">' +
+      '<div class="card-title">技能分类</div>' + rows +
+      '<button class="btn-ghost" data-newskill>＋ 新建技能</button>' +
+    '</div>' +
+    '<div class="card">' +
+      '<div class="card-title">数据</div>' +
+      '<p class="hint">明细只保留最近 365 天；更早的记录会合并成「每个技能每月」的总点数，等级和累计不受影响。</p>' +
+      '<button class="btn-ghost" data-export>导出备份</button>' +
+      '<button class="btn-ghost" data-import>导入备份</button>' +
+      '<input type="file" id="importFile" accept=".json,application/json" hidden>' +
+      '<button class="btn-ghost danger" data-clear>清空全部数据</button>' +
+    '</div>' +
+    '<div class="card">' +
+      '<div class="card-title">当作 App 用</div>' +
+      '<p class="hint">Safari 打开本页 → 点「分享」→「添加到主屏幕」。之后从桌面图标全屏打开。</p>' +
+      '<p class="hint">数据只存在这台 iPhone 的浏览器里。换网址、清网站数据都会看不到旧记录，记得偶尔导出备份。</p>' +
+    '</div>' +
+    '<div class="foot">技能加点 v1.0 · 每 100 点升一级</div>';
+}
+
+/* ---------- view switching ---------- */
+function setView(){
+  var v = ui.view;
+  document.getElementById('view-home').classList.toggle('hidden', v !== 'home');
+  document.getElementById('view-detail').classList.toggle('hidden', v !== 'detail');
+  document.getElementById('view-settings').classList.toggle('hidden', v !== 'settings');
+  document.getElementById('appHeader').classList.toggle('hidden', v !== 'home');
+  document.getElementById('actionbar').classList.toggle('hidden', v !== 'home');
+}
+
+function render(){
+  renderHome();
+  renderSettings();
+  if (ui.view === 'detail') renderDetail();
+  setView();
+}
+
+function openDetail(id){
+  var ok = state.skills.some(function(s){ return s.id === id; });
+  if (!ok) return;
+  ui.skillId = id;
+  ui.view = 'detail';
+  ui.range = '30';
+  renderDetail();
+  setView();
+  window.scrollTo(0,0);
+}
+
+/* ---------- toast ---------- */
+var toastTimer = null;
+function toast(msg){
+  var el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(function(){ el.classList.remove('show'); }, 1700);
+}
+
+/* ---------- modal ---------- */
+function openPrompt(opts){
+  var m = document.getElementById('modal');
+  m.innerHTML = '<div class="modal">' +
+    '<div class="modal-title">' + esc(opts.title || '') + '</div>' +
+    '<input id="modalInput" class="field" maxlength="16" placeholder="' + esc(opts.placeholder || '') + '" value="' + esc(opts.value || '') + '">' +
+    '<div class="modal-actions">' +
+      '<button class="btn-ghost" data-modal-cancel style="margin-top:0">取消</button>' +
+      '<button class="btn-primary slim" data-modal-ok>' + esc(opts.okText || '确定') + '</button>' +
+    '</div>' +
+  '</div>';
+  m.classList.add('open');
+  var input = document.getElementById('modalInput');
+  function ok(){
+    var v = input.value.trim();
+    if (!v){ input.classList.add('err'); input.focus(); return; }
+    closeModal();
+    if (opts.onOk) opts.onOk(v);
+  }
+  m.querySelector('[data-modal-ok]').onclick = ok;
+  m.querySelector('[data-modal-cancel]').onclick = closeModal;
+  input.addEventListener('keydown', function(ev){ if (ev.key === 'Enter'){ ev.preventDefault(); ok(); } });
+  setTimeout(function(){ try{ input.focus(); }catch(e){} }, 80);
+}
+
+function openConfirm(opts){
+  var m = document.getElementById('modal');
+  m.innerHTML = '<div class="modal">' +
+    '<div class="modal-title">' + esc(opts.title || '') + '</div>' +
+    '<div class="modal-text">' + esc(opts.text || '') + '</div>' +
+    '<div class="modal-actions">' +
+      '<button class="btn-ghost" data-modal-cancel style="margin-top:0">取消</button>' +
+      '<button class="btn-primary slim" data-modal-ok>' + esc(opts.okText || '确定') + '</button>' +
+    '</div>' +
+  '</div>';
+  m.classList.add('open');
+  m.querySelector('[data-modal-ok]').onclick = function(){ closeModal(); if (opts.onOk) opts.onOk(); };
+  m.querySelector('[data-modal-cancel]').onclick = closeModal;
+}
+
+function closeModal(){
+  var m = document.getElementById('modal');
+  m.classList.remove('open');
+  m.innerHTML = '';
+}
+
+/* ---------- sheet ---------- */
+function chipsHtml(){
+  var h = state.skills.map(function(s){
+    return '<button class="chip ' + (ui.addSkillId === s.id ? 'sel' : '') + '" data-chip="' + s.id + '" style="--c:' + s.color + '">' +
+      '<span class="dot"></span>' + esc(s.name) + '</button>';
+  }).join('');
+  return h + '<button class="chip new" data-newchip>＋ 新建</button>';
+}
+
+function updateSaveLabel(){
+  var input = document.getElementById('ptsInput');
+  var btn = document.getElementById('saveEntry');
+  if (!input || !btn) return;
+  var v = parseInt(input.value, 10);
+  btn.textContent = '记下 +' + (v > 0 ? v : 0) + ' 点';
+}
+
+function openAdd(skillId){
+  var last = null;
+  for (var i=0;i<state.skills.length;i++) if (state.skills[i].id === state.meta.lastSkillId) last = state.skills[i];
+  var fallback = last || state.skills[0];
+  ui.addSkillId = skillId || (fallback ? fallback.id : null);
+  var defPts = parseInt(state.meta.lastPoints, 10) > 0 ? parseInt(state.meta.lastPoints, 10) : 10;
+  var sheet = document.getElementById('sheet');
+  sheet.innerHTML =
+    '<div class="sheet-grab"></div>' +
+    '<div class="sheet-head"><div class="sheet-title">记录技能点</div><button class="sheet-close" data-sheet-close aria-label="关闭">×</button></div>' +
+    '<div class="label">技能</div>' +
+    '<div class="chips" id="chips">' + chipsHtml() + '</div>' +
+    '<div class="label">点数</div>' +
+    '<div class="points-row">' +
+      '<button class="step" data-step="-1" aria-label="减少">−</button>' +
+      '<input id="ptsInput" class="points-input" type="number" inputmode="numeric" min="1" max="9999" value="' + defPts + '">' +
+      '<button class="step" data-step="1" aria-label="增加">＋</button>' +
+    '</div>' +
+    '<div class="quick">' + [1,5,10,20,50].map(function(v){ return '<button class="q" data-quick="' + v + '">' + v + '</button>'; }).join('') + '</div>' +
+    '<div class="label">日期</div>' +
+    '<input id="dateInput" class="field" type="date" value="' + todayK() + '" max="' + todayK() + '">' +
+    '<div class="label">备注（可选）</div>' +
+    '<input id="noteInput" class="field" maxlength="30" placeholder="今天练了什么…">' +
+    '<button class="btn-primary" id="saveEntry" style="margin-top:20px">记下 +' + defPts + ' 点</button>';
+  document.getElementById('scrim').classList.add('open');
+  sheet.classList.add('open');
+  document.body.style.overflow = 'hidden';
+  updateSaveLabel();
+}
+
+function closeSheet(){
+  var sheet = document.getElementById('sheet');
+  sheet.classList.remove('open');
+  sheet.innerHTML = '';
+  document.getElementById('scrim').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+function doSave(){
+  var skill = null;
+  for (var i=0;i<state.skills.length;i++) if (state.skills[i].id === ui.addSkillId) skill = state.skills[i];
+  if (!skill){ toast('先新建并选一个技能'); return; }
+  var pts = parseInt(document.getElementById('ptsInput').value, 10);
+  if (!(pts > 0)){ toast('点数要大于 0'); return; }
+  pts = Math.min(pts, 9999);
+  var dateStr = document.getElementById('dateInput').value || todayK();
+  if (dateStr > todayK()){ toast('日期不能选未来'); return; }
+  var note = (document.getElementById('noteInput').value || '').trim().slice(0, 30);
+  state.entries.push({id:uid(), skillId:skill.id, points:pts, ts:dateToTs(dateStr), note:note});
+  state.meta.lastPoints = pts;
+  state.meta.lastSkillId = skill.id;
+  save();
+  closeSheet();
+  render();
+  toast('已记录 +' + pts + ' · ' + skill.name);
+}
+
+/* ---------- skill management ---------- */
+function newSkill(cb){
+  openPrompt({
+    title:'新建技能',
+    placeholder:'比如：调色、厨艺、歌唱',
+    okText:'创建',
+    onOk:function(name){
+      name = name.slice(0, 16);
+      var dup = state.skills.some(function(s){ return s.name === name; });
+      if (dup){ toast('已经有同名技能了'); return; }
+      var s = {id:uid(), name:name, color:PALETTE[state.skills.length % PALETTE.length]};
+      state.skills.push(s);
+      save();
+      render();
+      if (cb) cb(s);
+    }
+  });
+}
+
+/* ---------- export / import ---------- */
+function exportData(){
+  var data = JSON.stringify(state, null, 2);
+  var name = '技能加点备份-' + todayK() + '.json';
+  try{
+    var file = new File([data], name, {type:'application/json'});
+    if (navigator.canShare && navigator.canShare({files:[file]})){
+      navigator.share({files:[file], title:'技能加点备份'}).catch(function(err){
+        if (!err || err.name !== 'AbortError') downloadText(data, name);
+      });
+      return;
+    }
+  }catch(e){}
+  downloadText(data, name);
+}
+
+function downloadText(text, name){
+  try{
+    var blob = new Blob([text], {type:'application/json'});
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = name;
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(function(){ URL.revokeObjectURL(a.href); a.remove(); }, 1500);
+    toast('备份已导出');
+  }catch(e){ toast('导出失败，请换浏览器试试'); }
+}
+
+function importFile(file){
+  var reader = new FileReader();
+  reader.onload = function(){
+    var data = null;
+    try{ data = JSON.parse(String(reader.result)); }catch(e){}
+    if (!data || !Array.isArray(data.skills) || !Array.isArray(data.entries)){ toast('备份文件格式不对'); return; }
+    openConfirm({
+      title:'导入备份',
+      text:'将用备份覆盖当前数据（' + data.skills.length + ' 个技能），当前数据不会保留。继续吗？',
+      okText:'导入',
+      onOk:function(){
+        var skills = cleanSkills(data.skills);
+        var ids = {};
+        skills.forEach(function(s){ ids[s.id] = 1; });
+        state = {
+          version:1,
+          skills:skills,
+          entries:cleanEntries(data.entries, ids),
+          archives:cleanArchives(data.archives, ids),
+          meta:(data.meta && typeof data.meta === 'object') ? data.meta : {}
+        };
+        save();
+        ui.view = 'home'; ui.skillId = null;
+        render();
+        window.scrollTo(0,0);
+        toast('导入成功');
+      }
+    });
+  };
+  reader.readAsText(file);
+}
+
+/* ---------- events ---------- */
+document.addEventListener('click', function(e){
+  var t = e.target;
+
+  var chip = t.closest('[data-chip]');
+  if (chip){
+    ui.addSkillId = chip.getAttribute('data-chip');
+    var chips = document.getElementById('chips');
+    if (chips) chips.innerHTML = chipsHtml();
+    return;
+  }
+  if (t.closest('[data-newchip]')){
+    newSkill(function(s){
+      ui.addSkillId = s.id;
+      var chips = document.getElementById('chips');
+      if (chips) chips.innerHTML = chipsHtml();
+    });
+    return;
+  }
+  var step = t.closest('[data-step]');
+  if (step){
+    var input = document.getElementById('ptsInput');
+    if (input){
+      var v = parseInt(input.value, 10);
+      if (!(v > 0)) v = 0;
+      v = Math.max(1, Math.min(9999, v + Number(step.getAttribute('data-step'))));
+      input.value = v;
+      updateSaveLabel();
+    }
+    return;
+  }
+  var q = t.closest('[data-quick]');
+  if (q){
+    var pi = document.getElementById('ptsInput');
+    if (pi){ pi.value = q.getAttribute('data-quick'); updateSaveLabel(); }
+    return;
+  }
+  if (t.closest('#saveEntry')){ doSave(); return; }
+  if (t.closest('[data-sheet-close]')){ closeSheet(); return; }
+  if (t.closest('#quickAdd')){ openAdd(null); return; }
+  if (t.closest('#settingsBtn')){
+    ui.view = 'settings';
+    render();
+    window.scrollTo(0,0);
+    return;
+  }
+  if (t.closest('[data-back-home]')){
+    ui.view = 'home';
+    render();
+    window.scrollTo(0,0);
+    return;
+  }
+  var rangeBtn = t.closest('[data-range]');
+  if (rangeBtn){
+    ui.range = rangeBtn.getAttribute('data-range');
+    renderDetail();
+    return;
+  }
+  var addBtn = t.closest('[data-add]');
+  if (addBtn){
+    openAdd(addBtn.getAttribute('data-add'));
+    return;
+  }
+  var card = t.closest('[data-open]');
+  if (card){
+    openDetail(card.getAttribute('data-open'));
+    return;
+  }
+  var del = t.closest('[data-del]');
+  if (del){
+    var eid = del.getAttribute('data-del');
+    openConfirm({
+      title:'删除记录',
+      text:'删掉这条记录？该记录的点数会从累计里扣除。',
+      okText:'删除',
+      onOk:function(){
+        state.entries = state.entries.filter(function(x){ return x.id !== eid; });
+        save(); render(); toast('已删除');
+      }
+    });
+    return;
+  }
+  var ren = t.closest('[data-rename]');
+  if (ren){
+    var rid = ren.getAttribute('data-rename');
+    var skill = null;
+    state.skills.forEach(function(s){ if (s.id === rid) skill = s; });
+    if (!skill) return;
+    openPrompt({
+      title:'重命名技能',
+      value:skill.name,
+      okText:'保存',
+      onOk:function(name){
+        name = name.slice(0,16);
+        var dup = state.skills.some(function(s){ return s.id !== rid && s.name === name; });
+        if (dup){ toast('已经有同名技能了'); return; }
+        skill.name = name;
+        save(); render(); toast('已改名');
+      }
+    });
+    return;
+  }
+  var rm = t.closest('[data-remove]');
+  if (rm){
+    var delId = rm.getAttribute('data-remove');
+    var target = null;
+    state.skills.forEach(function(s){ if (s.id === delId) target = s; });
+    if (!target) return;
+    var count = state.entries.filter(function(x){ return x.skillId === delId; }).length;
+    openConfirm({
+      title:'删除技能',
+      text:'删除「' + target.name + '」会同时删除它的 ' + count + ' 条明细记录，无法恢复。',
+      okText:'删除',
+      onOk:function(){
+        state.skills = state.skills.filter(function(s){ return s.id !== delId; });
+        state.entries = state.entries.filter(function(x){ return x.skillId !== delId; });
+        state.archives = state.archives.filter(function(a){ return a.skillId !== delId; });
+        if (ui.skillId === delId){ ui.skillId = null; ui.view = 'home'; }
+        save(); render(); toast('已删除');
+      }
+    });
+    return;
+  }
+  if (t.closest('[data-newskill]')){ newSkill(); return; }
+  if (t.closest('[data-export]')){ exportData(); return; }
+  if (t.closest('[data-import]')){
+    var fp = document.getElementById('importFile');
+    if (fp) fp.click();
+    return;
+  }
+  if (t.closest('[data-clear]')){
+    openConfirm({
+      title:'清空全部数据',
+      text:'所有技能和记录都会被删除，无法恢复。建议先导出备份。',
+      okText:'清空',
+      onOk:function(){
+        state = freshState();
+        save();
+        ui.view = 'home'; ui.skillId = null;
+        render();
+        window.scrollTo(0,0);
+        toast('已清空');
+      }
+    });
+    return;
+  }
+});
+
+document.addEventListener('input', function(e){
+  if (e.target && e.target.id === 'ptsInput') updateSaveLabel();
+});
+
+document.addEventListener('change', function(e){
+  if (e.target && e.target.id === 'importFile'){
+    var f = e.target.files && e.target.files[0];
+    if (f) importFile(f);
+    e.target.value = '';
+  }
+});
+
+document.getElementById('scrim').addEventListener('click', closeSheet);
+document.getElementById('modal').addEventListener('click', function(e){
+  if (e.target && e.target.id === 'modal') closeModal();
+});
+document.getElementById('quickAdd').addEventListener('click', function(){ openAdd(null); });
+
+/* ---------- boot ---------- */
+if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.protocol === 'http:')){
+  try{ navigator.serviceWorker.register('./sw.js').catch(function(){}); }catch(e){}
+}
+compressOld();
+render();
+})();
+</script>
+</body>
+</html>
